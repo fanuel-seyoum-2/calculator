@@ -30,6 +30,18 @@
 
 	background-color: #4863A0;
 	border: solid 3px #354A21;
+
+	color: #FFFFFF;
+
+	display: flex;
+	flex-flow: column nowrap;
+	justify-content: space-between;
+	align-items: flex-end;
+}
+.cur-op,
+.op,
+.output {
+	height: 32px;
 }
 
 .keypad {
