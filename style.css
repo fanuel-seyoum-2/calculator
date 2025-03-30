@@ -86,7 +86,7 @@
 	background-color: #800517;
 	border: solid 2px #551606;
 
-	flex: 1 1 auto;
+	flex: 1 0 auto;
 }
 
 .operator {
@@ -98,5 +98,5 @@
 }
 
 .deactivated {
-	background-color: grey;
+	display: none;
 }
