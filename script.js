@@ -1,3 +1,28 @@
+function add(a, b) { return a + b; }
+function subtract(a, b) { return a - b; }
+function multiply(a, b) { return a * b; }
+function divide(a, b) {
+	if (b === 0) {
+		alert("Attempting to divide by Zero");
+		console.error("DivisionByZero");
+		return "Infinity"
+	}
+	return (a / b).toFixed(5);
+}
+
+function operate(op1, operator, op2) {
+	switch (operator) {
+		case "+":
+			return add(op1, op2);
+		case "-": 
+			return subtract(op1, op2);
+		case "*": 
+			return multiply(op1, op2);
+		case "/": 
+			return divide(op1, op2);
+	}
+}
+
 function createButtons(objArr) {
 	for (let objIt of objArr) {
 		let parNm = `${objIt.parentDiv}`
