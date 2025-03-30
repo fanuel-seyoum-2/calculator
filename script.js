@@ -9,6 +9,8 @@ function divide(a, b) {
 	}
 	return (a / b).toFixed(5);
 }
+function percent(a) { return a / 100; }
+function negate (a) { return a * -1; }
 
 function operate(op1, operator, op2) {
 	switch (operator) {
@@ -40,11 +42,11 @@ function createButtons(objArr) {
 // Button Objects
 let numObj = {
 	parentDiv: "numbers",
-	children: [9, 8, 7, 6, 5, 4, 3, 2, 1, "+/-", 0, '.'],
+	children: [9, 8, 7, 6, 5, 4, 3, 2, 1, 0, '.'],
 };
 let utilObj = {
 	parentDiv: "utils",
-	children: ["ac", "del"],
+	children: ["ac", "del", "%", "+/-"],
 };
 let opObj = {
 	parentDiv: "operators",
