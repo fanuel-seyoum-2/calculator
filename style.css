@@ -6,6 +6,10 @@
 	box-sizing: border-box;
 }
 
+body {
+	background-color: #151B54;
+}
+
 .calculator {
 	width: 400px;
 	height: 600px;
@@ -42,6 +46,13 @@
 .op,
 .output {
 	height: 32px;
+}
+.op {
+	font-weight: 100;
+}
+.output {
+	font-weight: 600;
+	color: cyan;
 }
 
 .keypad {
