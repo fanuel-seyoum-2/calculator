@@ -57,14 +57,70 @@ function handleInput(kpress, dispVs) {
 				toggleActivation();
 			}
 			curOp.textContent += btTxt;	
+			fullOp.textContent += btTxt;
 			break;
 		case "operator":
 			if (deactivated) 
 				toggleActivation();
-			operator = btTxt;
+			if (op1) {
+				op2 = output.textContent.trim() || op1; 
+			}
+
 			op1 = storeAndClear(curOp);
+			fullOp.textContent += " " + op1 + " ";
+
+			if (op1 && op2) {
+				let res = operate(+op2, operator, +op1);
+				output.textContent = res;
+			}
+
+			if (op2) {	
+				if (operator === "=") {
+					fullOp.textContent = op2 + " " + btTxt + " " + op1;
+					if (btTxt === "=") {
+						fullOp.textContent = op2 + " " + " " + op1;
+					}
+				}
+				else 
+					fullOp.textContent = op2 + " " + operator + " " + op1;
+			}
+			else {
+				fullOp.textContent = op1 + " " + btTxt; 
+				if (btTxt === "=")
+					fullOp.textContent = op1;
+			}
+			operator = btTxt;
 			break;
 		case "util":
+			handleUtil(kpress, dispVs);
+			break;
+	}
+}
+function handleUtil(kpress, dispVs) {
+	let [curOp, fullOp, output] = dispVs;
+
+	const btTxt = kpress.textContent; 
+	const str = curOp.textContent;
+	const cstr = fullOp.textContent;
+
+	switch (kpress.id) {
+		case "uti-ac":
+			break;
+		case "uti-del":
+			if (curOp.textContent.trim()) {
+				curOp.textContent = str.slice(0, str.length - 1);
+				fullOp.textContent = cstr.slice(0, cstr.length - 1);
+			}
+			break;
+		case "percent":
+			if (curOp.textContent.trim()) {
+				curOp.textContent = +curOp.textContent / 100;
+			}
+			break;
+		case "negate":
+			if (curOp.textContent.trim()) {
+				curOp.textContent = +curOp.textContent * -1;
+			}
 			break;
 	}
 }
@@ -91,6 +147,7 @@ let opObj = {
 
 // ids
 let opId = {
+	"%": "percent",
 	".": "point",
 	"+/-": "negate",
 	"+": "plus",
@@ -120,5 +177,5 @@ let dispDivs = [curOp, fullOp, output];
 let kp = document.querySelector(".keypad");
 kp.addEventListener("click", (e) => {
 	let bt = e.target;
-	op1 = handleInput(bt, dispDivs);
+	handleInput(bt, dispDivs);
 });
