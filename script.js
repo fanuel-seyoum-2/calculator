@@ -44,11 +44,12 @@ function toggleActivation() {
 	bt.classList.toggle("deactivated");
 }
 
-function handleInput(kpress, dispVs) {
+function handleInput(kpress, dispVs, opVars) {
 	const btClass = kpress.getAttribute("class");
 	const btTxt = kpress.textContent; 
 
 	let [curOp, fullOp, output] = dispVs;
+	let [op1, operator, op2] = opVars;
 
 	switch (btClass) {
 		case "number":
@@ -57,11 +58,20 @@ function handleInput(kpress, dispVs) {
 				toggleActivation();
 			}
 			curOp.textContent += btTxt;	
-			fullOp.textContent += btTxt;
+
+			if (output.textContent.trim() && fullOp.textContent.trim()) {
+				fullOp.textContent = output.textContent + " " +
+						operator + " " + curOp.textContent;
+			}
+			else {
+				fullOp.textContent += btTxt;
+			}
 			break;
 		case "operator":
+			[op1, operator, op2] = opVars;
 			if (deactivated) 
 				toggleActivation();
+
 			if (op1) {
 				op2 = output.textContent.trim() || op1; 
 			}
@@ -84,19 +94,22 @@ function handleInput(kpress, dispVs) {
 				else 
 					fullOp.textContent = op2 + " " + operator + " " + op1;
 			}
-			else {
+			else if (op1 || curOp.textContent.trim()) {
 				fullOp.textContent = op1 + " " + btTxt; 
 				if (btTxt === "=")
 					fullOp.textContent = op1;
 			}
 			operator = btTxt;
+			opVars = [op1, operator, op2];
 			break;
 		case "util":
-			handleUtil(kpress, dispVs);
+			opVars = handleUtil(kpress, dispVs, opVars);
 			break;
 	}
+
+	return opVars; 
 }
-function handleUtil(kpress, dispVs) {
+function handleUtil(kpress, dispVs, opVars) {
 	let [curOp, fullOp, output] = dispVs;
 
 	const btTxt = kpress.textContent; 
@@ -105,7 +118,10 @@ function handleUtil(kpress, dispVs) {
 
 	switch (kpress.id) {
 		case "uti-ac":
-			break;
+			curOp.textContent = "";
+			fullOp.textContent = "";
+			output.textContent = "";
+			return ["", "", ""];
 		case "uti-del":
 			if (curOp.textContent.trim()) {
 				curOp.textContent = str.slice(0, str.length - 1);
@@ -123,6 +139,7 @@ function handleUtil(kpress, dispVs) {
 			}
 			break;
 	}
+	return opVars;
 }
 
 function storeAndClear(divNm) {
@@ -163,9 +180,7 @@ createButtons(objArr);
 let deactivated = false;
 
 // Storage Variables
-let op1 = "";
-let operator = "";
-let op2 = "";
+let opVars = ["", "", ""];
 
 // Display divs
 let curOp = document.querySelector(".cur-op");
@@ -177,5 +192,5 @@ let dispDivs = [curOp, fullOp, output];
 let kp = document.querySelector(".keypad");
 kp.addEventListener("click", (e) => {
 	let bt = e.target;
-	handleInput(bt, dispDivs);
+	opVars = handleInput(bt, dispDivs, opVars);
 });
