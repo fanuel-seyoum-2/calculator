@@ -148,6 +148,26 @@ function storeAndClear(divNm) {
 	return val;
 }
 
+function simulateClick(kp, dispVs, opVars) {
+	const validKeys = "9876543210+-*/=";
+	if (validKeys.indexOf(`${kp}`) >= 0) {
+		let id = opId[kp] || `num-${kp}` ;
+		let kpress = document.querySelector(`#${id}`);
+		return handleInput(kpress, dispVs, opVars);
+	}
+	else {
+		switch (kp) {
+			case "Enter":
+				let ent = document.querySelector(`#equals`);
+				return handleInput(ent, dispVs, opVars);
+			case "Backspace":
+				let bsp = document.querySelector("#uti-del");
+				return handleInput(bsp, dispVs, opVars);	
+		}
+	}
+	return opVars;
+}
+
 // Button Objects
 let numObj = {
 	parentDiv: "numbers",
@@ -190,7 +210,11 @@ let output = document.querySelector(".output");
 let dispDivs = [curOp, fullOp, output];
 
 let kp = document.querySelector(".keypad");
+
 kp.addEventListener("click", (e) => {
 	let bt = e.target;
 	opVars = handleInput(bt, dispDivs, opVars);
+});
+document.addEventListener("keydown", (e) => {
+	opVars = simulateClick(e.key, dispDivs, opVars);
 });
