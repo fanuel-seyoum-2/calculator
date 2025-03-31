@@ -39,6 +39,42 @@ function createButtons(objArr) {
 	}
 }
 
+function toggleActivation() {
+	const bt = document.querySelector("#point");
+	bt.classList.toggle("deactivated");
+}
+
+function handleInput(kpress, dispVs) {
+	const btClass = kpress.getAttribute("class");
+	const btTxt = kpress.textContent; 
+
+	let [curOp, fullOp, output] = dispVs;
+
+	switch (btClass) {
+		case "number":
+			if (btTxt === ".") {
+				deactivated = true;
+				toggleActivation();
+			}
+			curOp.textContent += btTxt;	
+			break;
+		case "operator":
+			if (deactivated) 
+				toggleActivation();
+			operator = btTxt;
+			op1 = storeAndClear(curOp);
+			break;
+		case "util":
+			break;
+	}
+}
+
+function storeAndClear(divNm) {
+	let val = divNm.textContent;
+	divNm.textContent = null;
+	return val;
+}
+
 // Button Objects
 let numObj = {
 	parentDiv: "numbers",
@@ -52,6 +88,7 @@ let opObj = {
 	parentDiv: "operators",
 	children: ["+", "-", "*", "/", "="],
 };
+
 // ids
 let opId = {
 	".": "point",
@@ -65,3 +102,23 @@ let opId = {
 
 let objArr = [numObj, utilObj, opObj];
 createButtons(objArr);
+
+let deactivated = false;
+
+// Storage Variables
+let op1 = "";
+let operator = "";
+let op2 = "";
+
+// Display divs
+let curOp = document.querySelector(".cur-op");
+let fullOp = document.querySelector(".op");
+let output = document.querySelector(".output");
+
+let dispDivs = [curOp, fullOp, output];
+
+let kp = document.querySelector(".keypad");
+kp.addEventListener("click", (e) => {
+	let bt = e.target;
+	op1 = handleInput(bt, dispDivs);
+});
