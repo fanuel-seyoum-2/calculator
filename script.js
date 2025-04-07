@@ -1,3 +1,4 @@
+// Arithmetic Operations
 function add(a, b) { return a + b; }
 function subtract(a, b) { return a - b; }
 function multiply(a, b) { return a * b; }
@@ -14,17 +15,14 @@ function negate (a) { return a * -1; }
 
 function operate(op1, operator, op2) {
 	switch (operator) {
-		case "+":
-			return add(op1, op2);
-		case "-": 
-			return subtract(op1, op2);
-		case "*": 
-			return multiply(op1, op2);
-		case "/": 
-			return divide(op1, op2);
+		case "+": return add(op1, op2);
+		case "-": return subtract(op1, op2);
+		case "*": return multiply(op1, op2);
+		case "/": return divide(op1, op2);
 	}
 }
 
+// Button Creation
 function createButtons(objArr) {
 	for (let objIt of objArr) {
 		let parNm = `${objIt.parentDiv}`
@@ -60,8 +58,11 @@ function handleInput(kpress, dispVs, opVars) {
 			curOp.textContent += btTxt;	
 
 			if (output.textContent.trim() && fullOp.textContent.trim()) {
-				fullOp.textContent = output.textContent + " " +
-						operator + " " + curOp.textContent;
+				if (operator === "=") {
+					fullOp.textContent = curOp.textContent + " ";
+				}
+				else
+					fullOp.textContent = output.textContent + " " + operator + " " + curOp.textContent;
 			}
 			else {
 				fullOp.textContent += btTxt;
@@ -88,7 +89,7 @@ function handleInput(kpress, dispVs, opVars) {
 				if (operator === "=") {
 					fullOp.textContent = op2 + " " + btTxt + " " + op1;
 					if (btTxt === "=") {
-						fullOp.textContent = op2 + " " + " " + op1;
+						fullOp.textContent = op1 || op2;
 					}
 				}
 				else 
@@ -118,10 +119,8 @@ function handleUtil(kpress, dispVs, opVars) {
 
 	switch (kpress.id) {
 		case "uti-ac":
-			curOp.textContent = "";
-			fullOp.textContent = "";
-			output.textContent = "";
-			return ["", "", ""];
+			window.location.reload();
+			break;
 		case "uti-del":
 			if (curOp.textContent.trim()) {
 				curOp.textContent = str.slice(0, str.length - 1);
@@ -130,12 +129,14 @@ function handleUtil(kpress, dispVs, opVars) {
 			break;
 		case "percent":
 			if (curOp.textContent.trim()) {
-				curOp.textContent = +curOp.textContent / 100;
+				curOp.textContent = percent(+curOp.textContent);
+				fullOp.textContent = cstr.slice(0, cstr.length - str.length) + curOp.textContent;
 			}
 			break;
 		case "negate":
 			if (curOp.textContent.trim()) {
-				curOp.textContent = +curOp.textContent * -1;
+				curOp.textContent = negate(+curOp.textContent);
+				fullOp.textContent = cstr.slice(0, cstr.length - str.length) + curOp.textContent;
 			}
 			break;
 	}
@@ -148,6 +149,7 @@ function storeAndClear(divNm) {
 	return val;
 }
 
+// Keyboard Events
 function simulateClick(kp, dispVs, opVars) {
 	const validKeys = "9876543210+-*/=";
 	if (validKeys.indexOf(`${kp}`) >= 0) {
