@@ -38,70 +38,69 @@ function createButtons(objArr) {
 }
 
 function toggleActivation() {
+	deactivated = !deactivated;
 	const bt = document.querySelector("#point");
 	bt.classList.toggle("deactivated");
+}
+
+function handleNumericInput(btTxt, dispVs, opVars) {
+	let [curOp, fullOp, output] = dispVs;
+	let [op1, operator, op2] = opVars;
+
+	if (btTxt === ".") toggleActivation();
+	curOp.textContent += btTxt;	
+
+	if (operator && operator !== "=")
+		fullOp.textContent += btTxt;
+	else
+		fullOp.textContent = curOp.textContent;
+}
+function handleOperator(btTxt, dispVs, opVars) {
+	let [curOp, fullOp, output] = dispVs;
+	let [op1, operator, op2] = opVars;
+
+	if (deactivated) toggleActivation();
+
+	// Operand Assignment
+	if (op1) op2 = output.textContent.trim() || op1;
+	op1 = storeAndClear(curOp);
+	
+	// FullOp Display
+	if (op1 || operator !== btTxt) {
+		const cstr = fullOp.textContent.trim();
+		if (operator === "=") {
+			fullOp.textContent = curOp.textContent || op1 || op2 + " ";
+			if (btTxt !== operator)
+				fullOp.textContent += btTxt + " ";
+		}
+		else if (operator !== "=" || btTxt !== "=") {
+			if (cstr[cstr.length - 1] === operator) 
+				fullOp.textContent = cstr.textContent.slice(0, cstr.length - 1);
+			fullOp.textContent +=  " " + (btTxt) + " ";
+		}
+	}
+
+	// Output Display
+	if (op1 && op2) {
+		let result = operate(+op2, operator, +op1);
+		output.textContent = result;
+	}
+	
+	// Operator Assignment
+	operator = btTxt;
+	return [op1, operator, op2]
 }
 
 function handleInput(kpress, dispVs, opVars) {
 	const btClass = kpress.getAttribute("class");
 	const btTxt = kpress.textContent; 
 
-	let [curOp, fullOp, output] = dispVs;
-	let [op1, operator, op2] = opVars;
-
 	switch (btClass) {
 		case "number":
-			if (btTxt === ".") {
-				deactivated = true;
-				toggleActivation();
-			}
-			curOp.textContent += btTxt;	
-
-			if (output.textContent.trim() && fullOp.textContent.trim()) {
-				if (operator === "=") {
-					fullOp.textContent = curOp.textContent + " ";
-				}
-				else
-					fullOp.textContent = output.textContent + " " + operator + " " + curOp.textContent;
-			}
-			else {
-				fullOp.textContent += btTxt;
-			}
+			handleNumericInput(btTxt, dispVs, opVars);
 			break;
 		case "operator":
-			[op1, operator, op2] = opVars;
-			if (deactivated) 
-				toggleActivation();
-
-			if (op1) {
-				op2 = output.textContent.trim() || op1; 
-			}
-
-			op1 = storeAndClear(curOp);
-			fullOp.textContent += " " + op1 + " ";
-
-			if (op1 && op2) {
-				let res = operate(+op2, operator, +op1);
-				output.textContent = res;
-			}
-
-			if (op2) {	
-				if (operator === "=") {
-					fullOp.textContent = op2 + " " + btTxt + " " + op1;
-					if (btTxt === "=") {
-						fullOp.textContent = op1 || op2;
-					}
-				}
-				else 
-					fullOp.textContent = op2 + " " + operator + " " + op1;
-			}
-			else if (op1 || curOp.textContent.trim()) {
-				fullOp.textContent = op1 + " " + btTxt; 
-				if (btTxt === "=")
-					fullOp.textContent = op1;
-			}
-			operator = btTxt;
-			opVars = [op1, operator, op2];
+			opVars = handleOperator(btTxt, dispVs, opVars);
 			break;
 		case "util":
 			opVars = handleUtil(kpress, dispVs, opVars);
